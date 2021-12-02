@@ -56,19 +56,30 @@ async function main() {
         `#version 300 es
         in vec3 aPosition;
         in vec3 aNormal;
+        in vec2 aUV;
 
         uniform mat4 uProjectionMatrix;
         uniform mat4 uViewMatrix;
         uniform mat4 uModelMatrix;
+        uniform mat4 uNormalMatrix;
+        uniform vec3 uCameraPosition;
 
+        out vec3 normalInterp;
         out vec3 oNormal;
+        out vec3 oFragPosition;
+        out vec3 oCameraPosition;
+        out vec2 oUV;
 
         void main() {
-            // Simply use this normal so no error is thrown
-            oNormal = aNormal;
-
             // Postion of the fragment in world space
             gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1.0);
+
+            oFragPosition = (uModelMatrix * vec4(aPosition, 1.0)).xyz;
+
+            oNormal = normalize((uModelMatrix * vec4(aNormal, 0.0)).xyz);
+            oCameraPosition = uCameraPosition;
+            normalInterp = vec3(uNormalMatrix * vec4(aNormal, 0.0));
+            oUV = aUV;
         }
         `;
 
@@ -77,11 +88,67 @@ async function main() {
         #define MAX_LIGHTS 20
         precision highp float;
 
+        struct PointLight {
+            vec3 position;
+            vec3 colour;
+            float strength;
+        };
+
+        in vec3 oNormal;
+        in vec3 oFragPosition;
+        in vec3 oCameraPosition;
+        in vec3 normalInterp;
+        in vec2 oUV;
+
         uniform vec3 diffuseVal;
+        uniform vec3 ambientVal;
+        uniform vec3 specularVal;
+        uniform float nVal;
+        uniform float alphaVal;
+        uniform PointLight pointLights[MAX_LIGHTS];
+
+        uniform int numLights;
+        uniform sampler2D uTexture;
+        uniform int samplerExists;
+
+
 
         out vec4 fragColor;
         void main() {
-            fragColor = vec4(diffuseVal, 1.0);
+            vec3 normal = normalize(normalInterp);
+            vec3 lightColour;
+            vec3 lightDir;
+            vec3 diffuse, specular;
+            float diff;
+            vec3 ambient = ambientVal;
+            
+            vec3 viewDir = normalize(oCameraPosition - oFragPosition);
+            
+
+            for (int i = 0; i < numLights; i++) {
+                
+                lightDir = normalize(pointLights[i].position - oFragPosition);
+                float distance = length(lightDir);
+                distance = distance * distance;
+                diff = max(dot(normal, lightDir), 0.0);
+
+                if (diff > 0.0) {
+                    vec3 halfDir = normalize(lightDir + viewDir);
+                    float spec = max(dot(halfDir, normal), 0.0);
+                    specular = specularVal * pow(spec, nVal) * pointLights[i].strength * pointLights[i].colour / distance;
+                }
+
+                vec4 textureColour;
+                if (samplerExists == 1) {
+                    textureColour = texture(uTexture, oUV);
+                    diffuse += mix(diffuseVal, textureColour.rgb, 0.7) * diff * pointLights[i].strength * pointLights[i].colour / distance;
+                } else {
+                    diffuse += diffuseVal * diff * pointLights[i].strength * pointLights[i].colour / distance;
+                }
+
+            }
+
+            fragColor = vec4((diffuse + ambient + specular), alphaVal);
         }
         `;
 
@@ -257,6 +324,7 @@ function drawScene(gl, deltaTime, state) {
             gl.uniform3fv(object.programInfo.uniformLocations.ambientVal, object.material.ambient);
             gl.uniform3fv(object.programInfo.uniformLocations.specularVal, object.material.specular);
             gl.uniform1f(object.programInfo.uniformLocations.nVal, object.material.n);
+            gl.uniform1f(object.programInfo.uniformLocations.alphaVal, object.material.alpha);
 
             gl.uniform1i(object.programInfo.uniformLocations.numLights, state.numLights);
             if (state.pointLights.length > 0) {
@@ -313,3 +381,4 @@ function drawScene(gl, deltaTime, state) {
         }
     });
 }
+

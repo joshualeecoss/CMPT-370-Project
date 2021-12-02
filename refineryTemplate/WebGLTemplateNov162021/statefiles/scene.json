@@ -1,1 +1,722 @@
-[{"objects":[{"name":"spacecraft","material":{"diffuse":[0.5882,0.5882,0.5882],"ambient":[0.3,0.3,0.3],"specular":[0.5,0.5,0.5],"n":"15","shaderType":1,"alpha":1},"type":"mesh","position":[0,0,0],"scale":[1,1,1],"diffuseTexture":"default.jpg","normalTexture":"defaultNorm.jpg","rotation":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"parent":null,"model":"SmallSpaceFighter.obj"},{"name":"meteorL","material":{"diffuse":[0.36470588235294116,0.4588235294117647,0.10196078431372549],"ambient":[0.3,0.3,0.3],"specular":[0.5,0.5,0.5],"n":10.000002,"shaderType":1,"alpha":1},"type":"mesh","position":[3.5,1,-10.5],"scale":[0.015625,0.015625,0.015625],"diffuseTexture":"default.jpg","normalTexture":"defaultNorm.jpg","rotation":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"parent":null,"model":"Asteroid_o.obj"},{"name":"meteorS","material":{"diffuse":[0.9411764705882353,0.2,0.2],"ambient":[0.3,0.3,0.3],"specular":[0.5,0.5,0.5],"n":10.000002,"shaderType":1,"alpha":1},"type":"mesh","position":[1,0,-10],"scale":[0.0078125,0.0078125,0.0078125],"diffuseTexture":"default.jpg","normalTexture":"defaultNorm.jpg","rotation":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"parent":null,"model":"Asteroid_o.obj"},{"name":"missile","material":{"diffuse":[0.3803921568627451,0.8431372549019608,1],"ambient":[0.3,0.3,0.3],"specular":[0.5,0.5,0.5],"n":"20","shaderType":1,"alpha":1},"type":"mesh","position":[-364,-202.5,-12.5],"scale":[0.25,0.0625,0.03125],"diffuseTexture":"default.jpg","normalTexture":"defaultNorm.jpg","rotation":[-0.258825421333313,1.4670399117733268e-8,-0.9659240245819092,0,0,1,1.518794157107095e-8,0,0.9659240245819092,3.931024394887572e-9,-0.258825421333313,0,0,0,0,1],"parent":null,"model":"Aim-54_Phoenix.obj"},{"name":"bulletL","material":{"diffuse":[0.5882,0.5882,0.5882],"ambient":[0.3,0.3,0.3],"specular":[0.5,0.5,0.5],"n":10.000002,"shaderType":1,"alpha":1},"type":"mesh","position":[-0.5,0.10000000149011612,-1.75],"scale":[0.0625,0.0625,0.0625],"diffuseTexture":"default.jpg","normalTexture":"defaultNorm.jpg","rotation":[-0.9999999403953552,1.518794157107095e-8,-0.000004655586963053793,0,-2.388528819174951e-10,1,-2.4295408756645417e-14,0,0.000004655586963053793,0,-0.9999999403953552,0,0,0,0,1],"parent":null,"model":"5.56mm.obj"},{"name":"bulletR","material":{"diffuse":[0.5882,0.5882,0.5882],"ambient":[0.3,0.3,0.3],"specular":[0.5,0.5,0.5],"n":10.000002,"shaderType":1,"alpha":1},"type":"mesh","position":[0.1300000101327896,0.07999999821186066,-1.899999976158142],"scale":[0.0625,0.0625,0.0625],"diffuseTexture":"default.jpg","normalTexture":"defaultNorm.jpg","rotation":[-0.9999999403953552,-1.359889267860126e-8,-0.000004655109478335362,0,-1.359889356677968e-8,1,0,0,0.000004655109478335362,6.252521422703619e-14,-0.9999999403953552,0,0,0,0,1],"parent":null,"model":"5.56mm.obj"}],"pointLights":[{"name":"pointLight1","colour":[1,1,1],"position":[0,5,0],"strength":2,"quadratic":0.035,"linear":0.09,"constant":1,"nearPlane":0.5,"farPlane":100,"shadow":0}],"settings":{"backgroundColor":[1,1,1],"camera":{"name":"mainCamera","position":[0,0.5,-3],"front":[-0.06270446545560246,-0.052335954511728226,-0.9966589676901891],"up":[0,1,0],"pitch":-2.999999999999939,"yaw":-1893.5999999999697,"roll":0,"moveSpeed":10,"move":false,"canvasFocused":false,"rateX":0,"rateY":0,"keyboard":{"s":false,"a":false,"S":false},"viewMatrix":{"0":0.9980267286300659,"1":-0.0032862008083611727,"2":0.06270445883274078,"3":0,"4":0,"5":0.9986295104026794,"6":0.0523359440267086,"7":0,"8":-0.06279051303863525,"9":-0.05223267152905464,"10":0.996658980846405,"11":0,"12":-0.18837153911590576,"13":-0.656012773513794,"14":2.963809013366699,"15":1},"sensitivity":0.4}}}]
+[
+    {
+        "objects": [
+            {
+                "name": "bulletR",
+                "material": {
+                    "diffuse": [
+                        0.5882,
+                        0.5882,
+                        0.5882
+                    ],
+                    "ambient": [
+                        0.3,
+                        0.3,
+                        0.3
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": 10.000002,
+                    "shaderType": 1,
+                    "alpha": 1
+                },
+                "type": "mesh",
+                "position": [
+                    0.1300000101327896,
+                    1,
+                    -1.899999976158142
+                ],
+                "scale": [
+                    0.125,
+                    0.125,
+                    0.125
+                ],
+                "diffuseTexture": "default.jpg",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    -0.9999999403953552,
+                    -1.359889267860126e-8,
+                    -0.000004655109478335362,
+                    0,
+                    -1.359889356677968e-8,
+                    1,
+                    0,
+                    0,
+                    0.000004655109478335362,
+                    6.252521422703619e-14,
+                    -0.9999999403953552,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": "5.56mm.obj"
+            },
+            {
+                "name": "spacecraft",
+                "material": {
+                    "diffuse": [
+                        0.5882,
+                        0.5882,
+                        0.5882
+                    ],
+                    "ambient": [
+                        0.3,
+                        0.3,
+                        0.3
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": "15",
+                    "shaderType": 1,
+                    "alpha": 1
+                },
+                "type": "mesh",
+                "position": [
+                    0,
+                    1,
+                    0
+                ],
+                "scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "diffuseTexture": "default.jpg",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": "SmallSpaceFighter.obj"
+            },
+            {
+                "name": "bulletL",
+                "material": {
+                    "diffuse": [
+                        0.5882,
+                        0.5882,
+                        0.5882
+                    ],
+                    "ambient": [
+                        0.3,
+                        0.3,
+                        0.3
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": 10.000002,
+                    "shaderType": 1,
+                    "alpha": 1
+                },
+                "type": "mesh",
+                "position": [
+                    -0.5,
+                    1,
+                    -1.75
+                ],
+                "scale": [
+                    0.125,
+                    0.125,
+                    0.125
+                ],
+                "diffuseTexture": "default.jpg",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    -0.9999999403953552,
+                    1.518794157107095e-8,
+                    -0.000004655586963053793,
+                    0,
+                    -2.388528819174951e-10,
+                    1,
+                    -2.4295408756645417e-14,
+                    0,
+                    0.000004655586963053793,
+                    0,
+                    -0.9999999403953552,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": "5.56mm.obj"
+            },
+            {
+                "name": "missile",
+                "material": {
+                    "diffuse": [
+                        0,
+                        0.7490196078431373,
+                        1
+                    ],
+                    "ambient": [
+                        0.3,
+                        0.3,
+                        0.3
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": "20",
+                    "shaderType": 1,
+                    "alpha": 1
+                },
+                "type": "mesh",
+                "position": [
+                    123.5,
+                    147.5,
+                    0
+                ],
+                "scale": [
+                    0.25,
+                    0.015625,
+                    0.03125
+                ],
+                "diffuseTexture": "default.jpg",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    -0.258825421333313,
+                    1.4670399117733268e-8,
+                    -0.9659240245819092,
+                    0,
+                    -8.326672684688674e-17,
+                    0.9999999999999997,
+                    1.5187941612704314e-8,
+                    0,
+                    0.965924024581909,
+                    3.93102428386527e-9,
+                    -0.25882542133331293,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": "Aim-54_Phoenix.obj"
+            },
+            {
+                "name": "meteorL",
+                "material": {
+                    "diffuse": [
+                        0.2901960784313726,
+                        0.2901960784313726,
+                        0.2901960784313726
+                    ],
+                    "ambient": [
+                        0.3,
+                        0.3,
+                        0.3
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": "25",
+                    "shaderType": 1,
+                    "alpha": 1
+                },
+                "type": "mesh",
+                "position": [
+                    10,
+                    1,
+                    0
+                ],
+                "scale": [
+                    0.015625,
+                    0.015625,
+                    0.015625
+                ],
+                "diffuseTexture": "default.jpg",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": "meteoroidL.obj"
+            },
+            {
+                "name": "meteorS",
+                "material": {
+                    "diffuse": [
+                        0.3607843137254902,
+                        0.3607843137254902,
+                        0.3607843137254902
+                    ],
+                    "ambient": [
+                        0.3,
+                        0.3,
+                        0.3
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": "30",
+                    "shaderType": 1,
+                    "alpha": 1
+                },
+                "type": "mesh",
+                "position": [
+                    -10,
+                    1,
+                    0
+                ],
+                "scale": [
+                    15,
+                    15,
+                    3
+                ],
+                "diffuseTexture": "default.jpg",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": "meteoroidS.obj"
+            },
+            {
+                "name": "background",
+                "material": {
+                    "diffuse": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "ambient": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": "10",
+                    "shaderType": 3,
+                    "alpha": "1"
+                },
+                "type": "plane",
+                "position": [
+                    0,
+                    -3,
+                    0
+                ],
+                "scale": [
+                    512,
+                    1,
+                    256
+                ],
+                "diffuseTexture": "space.png",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": null
+            },
+            {
+                "name": "wall1",
+                "material": {
+                    "diffuse": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "ambient": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": 10.000002,
+                    "shaderType": 3,
+                    "alpha": 1
+                },
+                "type": "plane",
+                "position": [
+                    0,
+                    59.5,
+                    64.5
+                ],
+                "scale": [
+                    512,
+                    1,
+                    256
+                ],
+                "diffuseTexture": "space.png",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": null
+            },
+            {
+                "name": "wall2",
+                "material": {
+                    "diffuse": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "ambient": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": 10.000002,
+                    "shaderType": 3,
+                    "alpha": 1
+                },
+                "type": "plane",
+                "position": [
+                    0,
+                    59.5,
+                    -64.5
+                ],
+                "scale": [
+                    512,
+                    1,
+                    256
+                ],
+                "diffuseTexture": "space.png",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    -1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": null
+            },
+            {
+                "name": "wall3",
+                "material": {
+                    "diffuse": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "ambient": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": 10.000002,
+                    "shaderType": 3,
+                    "alpha": 1
+                },
+                "type": "plane",
+                "position": [
+                    -120.5,
+                    56.5,
+                    0
+                ],
+                "scale": [
+                    256,
+                    1,
+                    256
+                ],
+                "diffuseTexture": "space.png",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    0,
+                    -1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": null
+            },
+            {
+                "name": "wall4",
+                "material": {
+                    "diffuse": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "ambient": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": 10.000002,
+                    "shaderType": 3,
+                    "alpha": 1
+                },
+                "type": "plane",
+                "position": [
+                    120.5,
+                    56.5,
+                    0
+                ],
+                "scale": [
+                    256,
+                    1,
+                    256
+                ],
+                "diffuseTexture": "space.png",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    0,
+                    1,
+                    0,
+                    0,
+                    -1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": null
+            }
+        ],
+        "pointLights": [
+            {
+                "name": "pointLight1",
+                "colour": [
+                    1,
+                    1,
+                    1
+                ],
+                "position": [
+                    0,
+                    50,
+                    50
+                ],
+                "strength": 1,
+                "quadratic": 0.035,
+                "linear": 0.09,
+                "constant": 1,
+                "nearPlane": 0.5,
+                "farPlane": 100,
+                "shadow": 0
+            },
+            {
+                "name": "pointLight2",
+                "colour": [
+                    0.2,
+                    0.2,
+                    0.2
+                ],
+                "position": [
+                    0,
+                    50,
+                    -50
+                ],
+                "strength": 1,
+                "quadratic": 0.035,
+                "linear": 0.09,
+                "constant": 1,
+                "nearPlane": 0.5,
+                "farPlane": 100,
+                "shadow": 0
+            }
+        ],
+        "settings": {
+            "backgroundColor": [
+                0,
+                0,
+                0
+            ],
+            "camera": {
+                "name": "mainCamera",
+                "position": [
+                    0,
+                    75,
+                    0
+                ],
+                "front": [
+                    0,
+                    -1,
+                    0
+                ],
+                "up": [
+                    0,
+                    0,
+                    1
+                ],
+                "pitch": -49.400000000000006,
+                "yaw": -1854.7999999999245,
+                "roll": 0,
+                "moveSpeed": 10,
+                "move": false,
+                "canvasFocused": false,
+                "rateX": 0,
+                "rateY": 0,
+                "keyboard": {
+                    "s": false,
+                    "w": false,
+                    "a": false,
+                    "d": false
+                },
+                "viewMatrix": {
+                    "0": 1,
+                    "1": 0,
+                    "2": 0,
+                    "3": 0,
+                    "4": 0,
+                    "5": 0,
+                    "6": 1,
+                    "7": 0,
+                    "8": 0,
+                    "9": -1,
+                    "10": 0,
+                    "11": 0,
+                    "12": 0,
+                    "13": 0,
+                    "14": -98,
+                    "15": 1
+                },
+                "sensitivity": 0.4
+            }
+        }
+    }
+]
