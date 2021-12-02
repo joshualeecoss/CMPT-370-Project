@@ -33,18 +33,19 @@ class Game {
     //     });
     // }
 
+
     // runs once on startup after the scene loads the objects
     async onStart() {
         console.log("On start");
 
         // this just prevents the context menu from popping up when you right click
-        document.addEventListener("contextmenu", (e) => {
-            e.preventDefault();
-        }, false);
+        // document.addEventListener("contextmenu", (e) => {
+        //     e.preventDefault();
+        // }, false);
 
         // example - set an object in onStart before starting our render loop!
-        this.cube = getObject(this.state, "cube1");
-        const otherCube = getObject(this.state, "cube2"); // we wont save this as instance var since we dont plan on using it in update
+        this.player = getObject(state, "spacecraft");
+        this.camera = state.settings.camera;
 
         // example - create sphere colliders on our two objects as an example, we give 2 objects colliders otherwise
         // no collision can happen
@@ -59,12 +60,14 @@ class Game {
 
             switch (e.key) {
                 case "a":
-                    this.cube.translate(vec3.fromValues(0.5, 0, 0));
+                    this.player.translate(vec3.fromValues(-0.1, 0, 0));
                     break;
 
                 case "d":
-                    this.cube.translate(vec3.fromValues(-0.5, 0, 0));
+                    this.player.translate(vec3.fromValues(0.1, 0, 0));
                     break;
+
+
 
                 default:
                     break;
@@ -73,43 +76,43 @@ class Game {
 
         this.customMethod(); // calling our custom method! (we could put spawning logic, collision logic etc in there ;) )
 
-        // example: spawn some stuff before the scene starts
-        // for (let i = 0; i < 10; i++) {
-        //     for (let j = 0; j < 10; j++) {
-        //         for (let k = 0; k < 10; k++) {
-        //             spawnObject({
-        //                 name: `new-Object${i}${j}${k}`,
-        //                 type: "cube",
-        //                 material: {
-        //                     diffuse: randomVec3(0, 1)
-        //                 },
-        //                 position: vec3.fromValues(4 - i, 5 - j, 10 - k),
-        //                 scale: vec3.fromValues(0.5, 0.5, 0.5)
-        //             }, this.state);
-        //         }
-        //     }
-        // }
+        //example: spawn some stuff before the scene starts
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+                for (let k = 0; k < 2; k++) {
+                    spawnObject({
+                        name: `new-Object${i}${j}${k}`,
+                        type: "spacecraft",
+                        material: {
+                            diffuse: randomVec3(0, 1)
+                        },
+                        position: vec3.fromValues(4 - i, 1.0, 4 - k),
+                        scale: vec3.fromValues(1.0, 1.0, 1.0),
+                    }, this.state);
+                }
+            }
+        }
 
-        // for (let i = 0; i < 10; i++) {
-        //     let tempObject = await spawnObject({
-        //         name: `new-Object${i}`,
-        //         type: "cube",
-        //         material: {
-        //             diffuse: randomVec3(0, 1)
-        //         },
-        //         position: vec3.fromValues(4 - i, 0, 0),
-        //         scale: vec3.fromValues(0.5, 0.5, 0.5)
-        //     }, this.state);
+        for (let i = 0; i < 10; i++) {
+            let tempObject = await spawnObject({
+                name: `new-Object${i}`,
+                type: "spacecraft",
+                material: {
+                    diffuse: randomVec3(0, 1)
+                },
+                position: vec3.fromValues(4 - i, 0, 0),
+                scale: vec3.fromValues(0.5, 0.5, 0.5)
+            }, this.state);
 
 
-        // tempObject.constantRotate = true; // lets add a flag so we can access it later
-        // this.spawnedObjects.push(tempObject); // add these to a spawned objects list
+        //tempObject.constantRotate = true; // lets add a flag so we can access it later
+        this.spawnedObjects.push(tempObject); // add these to a spawned objects list
 
         // tempObject.collidable = true;
         // tempObject.onCollide = (object) => { // we can also set a function on an object without defining the function before hand!
         //     console.log(`I collided with ${object.name}!`);
         // };
-        // }
+        }
     }
 
     // Runs once every frame non stop after the scene loads
