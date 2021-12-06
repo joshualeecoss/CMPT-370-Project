@@ -1,6 +1,7 @@
 var state = {};
 var game;
 var sceneFile = "scene.json"; // can change this to be the name of your scene
+const matrices = [];
 
 // This function loads on window load, uses async functions to load the scene then try to render it
 window.onload = async () => {
@@ -63,6 +64,7 @@ async function main() {
         uniform mat4 uModelMatrix;
         uniform mat4 uNormalMatrix;
         uniform vec3 uCameraPosition;
+        
 
         out vec3 normalInterp;
         out vec3 oNormal;
@@ -71,9 +73,9 @@ async function main() {
         out vec2 oUV;
 
         void main() {
+    
             // Postion of the fragment in world space
             gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1.0);
-
             oFragPosition = (uModelMatrix * vec4(aPosition, 1.0)).xyz;
 
             oNormal = normalize((uModelMatrix * vec4(aNormal, 0.0)).xyz);
@@ -210,19 +212,68 @@ function addObjectToScene(state, object) {
 
 /**
  * 
+ * @param {Integer - minimum value} min 
+ * @param {Integer - maximum value} max 
+ * @purpose - Helper function for getting integer random number
+ * reference from: https://www.geeksforgeeks.org/how-to-generate-random-number-in-given-range-using-javascript/
+ */
+function randomInt(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+// duplicate
+function dupMeteors(object) {
+    //copies basic properties and instantiate all buffers
+}
+
+
+/**
+ * 
  * @param {gl context} gl 
  * @param {object - object containing scene values} state 
  * @purpose - Calls the drawscene per frame
  */
 function startRendering(gl, state) {
     // A variable for keeping track of time between frames
-    var then = 0.0;
-
+    var then = 0.0; 
+    
     // This function is called when we want to render a frame to the canvas
     function render(now) {
         now *= 0.001; // convert to seconds
         const deltaTime = now - then;
         then = now;
+
+        let meteorS = getObject(state, "meteorL");
+        let meteorL = getObject(state, "meteorS");
+        let bulletL = getObject(state, "bulletL");
+        let bulletR = getObject(state, "bulletR");
+        //console.log(state);
+        //gl.drawArraysInstanced(gl.TRIANGLES,0, object.buffers.numVertices/3, 2);
+        //if (matrices.length !== 0) {
+            //for (let i = 0; i < 20; i++) {
+                
+                //meteorL.model.position = vec3.fromValues(randomInt(10, 50));
+                //matrices[i].setup();
+            //}
+        //}
+
+        mat4.rotateY(meteorS.model.rotation, meteorS.model.rotation, 0.3 * deltaTime);
+        mat4.rotateY(meteorL.model.rotation, meteorS.model.rotation, 0.1 * deltaTime);
+        
+    
+        /*document.addEventListener("keydown", (event) => {
+            var object = state.objects;
+            switch (event.code) {
+                case "Space":
+                    console.log("works");         
+                    vec3.add(bulletL.model.position, bulletL.model.position, vec3.fromValues(0.1, 0.1, 0));
+                break;
+            default:
+                break;
+            }
+        });*/
+        
+
 
         state.deltaTime = deltaTime;
         drawScene(gl, deltaTime, state);
@@ -326,6 +377,8 @@ function drawScene(gl, deltaTime, state) {
             gl.uniform1f(object.programInfo.uniformLocations.nVal, object.material.n);
             gl.uniform1f(object.programInfo.uniformLocations.alphaVal, object.material.alpha);
 
+            
+
             gl.uniform1i(object.programInfo.uniformLocations.numLights, state.numLights);
             if (state.pointLights.length > 0) {
                 for (let i = 0; i < state.pointLights.length; i++) {
@@ -337,11 +390,20 @@ function drawScene(gl, deltaTime, state) {
                 }
             }
 
+            //try
+            /*if (object.name == "meteorS") {
+                for (let i = 0; i < 20; i++) {
+                    //matrices.push(state);
+                    addObjectToScene(state, object);
+                    object.position = vec3.fromValues(randomInt(10, 50), randomInt(10, 50), randomInt(10, 50));
+                    
+                }
+            }*/
 
             {
                 // Bind the buffer we want to draw
                 gl.bindVertexArray(object.buffers.vao);
-
+                
                 //check for diffuse texture and apply it
                 if (object.model.texture != null) {
                     state.samplerExists = 1;
@@ -367,15 +429,17 @@ function drawScene(gl, deltaTime, state) {
                     state.samplerNormExists = 0;
                     gl.uniform1i(object.programInfo.uniformLocations.normalSamplerExists, state.samplerNormExists);
                 }
-
+                
                 // Draw the object
                 const offset = 0; // Number of elements to skip before starting
-
+                                            
                 //if its a mesh then we don't use an index buffer and use drawArrays instead of drawElements
-                if (object.type === "mesh" || object.type === "meshCustom") {
+                if (object.type === "mesh" || object.type === "meshCustom") {                                                                              
                     gl.drawArrays(gl.TRIANGLES, offset, object.buffers.numVertices / 3);
-                } else {
-                    gl.drawElements(gl.TRIANGLES, object.buffers.numVertices, gl.UNSIGNED_SHORT, offset);
+                }                  
+                else {
+                gl.drawElements(gl.TRIANGLES, object.buffers.numVertices, gl.UNSIGNED_SHORT, offset);
+                
                 }
             }
         }

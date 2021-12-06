@@ -3,6 +3,8 @@ class Game {
         this.state = state;
         this.spawnedObjects = [];
         this.collidableObjects = [];
+        this.flag = 0;
+        
     }
 
     // example - we can add our own custom method to our game and call it using 'this.customMethod()'
@@ -43,9 +45,43 @@ class Game {
         //     e.preventDefault();
         // }, false);
 
+        
+        
+
         // example - set an object in onStart before starting our render loop!
         this.player = getObject(state, "spacecraft");
-        this.camera = state.settings.camera;
+        this.bulletL = getObject(state, "bulletL");
+        this.bulletR = getObject(state, "bulletR");   
+        this.mainCamera = state.settings.camera;
+        
+
+
+        /*this.mainCamera.right = vec3.fromValues(-1.0, 0.0, 0.0);
+        this.mainCamera.center = vec3.fromValues(0.5, 0.5, 0.0);
+        vec3.subtract(this.mainCamera.front, this.mainCamera.center, this.mainCamera.position);
+        vec3.normalize(this.mainCamera.front, this.mainCamera.front);
+        vec3.cross(this.mainCamera.right, this.mainCamera.front, this.mainCamera.up);*/
+
+        /* vec3.subtract(this.mainCamera.front, this.mainCamera.center, this.mainCamera.position);
+        vec3.normalize(this.mainCamera.front, this.mainCamera.front);
+        vec3.cross(this.mainCamera.right, this.mainCamera.front, this.mainCamera.up);
+        vec3.cross(this.mainCamera.up, this.mainCamera.right, this.mainCamera.front);
+        vec3.multiply(this.mainCamera.right, this.mainCamera.right, vec3.fromValues(0.1, 0.1, 0.1));
+        vec3.subtract(this.mainCamera.center, this.mainCamera.center, this.mainCamera.up); */
+
+        /*vec3.subtract(this.mainCamera.front, this.mainCamera.center, this.mainCamera.position);
+        vec3.normalize(this.mainCamera.front, this.mainCamera.front);
+        vec3.cross(this.mainCamera.right, this.mainCamera.front, this.mainCamera.up);
+        vec3.multiply(this.mainCamera.right, this.mainCamera.right, vec3.fromValues(0.1, 0.1, 0.1));
+        vec3.add(this.mainCamera.center, this.mainCamera.center, this.mainCamera.right);*/
+
+        
+        //console.log(state.settings);
+        //console.log(this.secondcamera);
+        //console.log(this.player);
+        
+        //console.log(this.bulletL.position);
+
 
         // example - create sphere colliders on our two objects as an example, we give 2 objects colliders otherwise
         // no collision can happen
@@ -53,19 +89,128 @@ class Game {
         //     console.log(`This is a custom collision of ${otherObject.name}`)
         // });
         // this.createSphereCollider(otherCube, 0.5);
-
+        /*if (this.flag == 0) { // flag = 0 ; top view    
+                
+            this.mainCamera.position = vec3.fromValues(0, 113, 0); 
+            this.mainCamera.front = vec3.fromValues(0, -1, 0);
+        }
+        else if (this.flag == 1) { // flag = 1 ; spaceship view
+            
+            this.mainCamera.position[0] = this.player.model.position[0];
+            this.mainCamera.position[1] = this.player.model.position[1] + 1.2;
+            this.mainCamera.position[2] = this.player.model.position[2] + 1.5;
+            this.mainCamera.front = this.player.centroid;
+        }*/
         // example - setting up a key press event to move an object in the scene
-        document.addEventListener("keypress", (e) => {
+        document.addEventListener("keydown", (e) => {
             e.preventDefault();
+            console.log(this.flag);
+           
 
-            switch (e.key) {
-                case "a":
-                    this.player.translate(vec3.fromValues(-0.1, 0, 0));
+            switch (e.code) {
+                case "Enter": // camera change 
+                    //e.preventDefault();
+                    if (this.flag == 0){                      
+                        
+                        this.mainCamera.position[0] = this.player.model.position[0];
+                        this.mainCamera.position[1] = this.player.model.position[1] + 1.2;
+                        this.mainCamera.position[2] = this.player.model.position[2] + 1.5;
+                        this.mainCamera.front = this.player.centroid;  
+                        this.flag = 1;   
+                        
+                    } else {  
+                        this.mainCamera.position = vec3.fromValues(0, 113, 0); 
+                        this.mainCamera.front = vec3.fromValues(0, -1, 0);                   
+                        this.flag = 0;
+                                                   
+                    }                                       
                     break;
 
-                case "d":
-                    this.player.translate(vec3.fromValues(0.1, 0, 0));
+                case "KeyA":
+                    console.log(this.player.model);
+                    console.log(this.mainCamera);
+                    if (e.getModifierState("Shift")) {
+                        mat4.rotateY(this.player.model.rotation,this.player.model.rotation, -0.1);
+                        // need camera rotation
+                        
+
+                    } else {
+                        this.player.translate(vec3.fromValues(0.3, 0, 0));
+                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0.3, 0, 0));
+                    }
                     break;
+
+                case "KeyD":
+                    if (e.getModifierState("Shift")) {
+                        mat4.rotateY(this.player.model.rotation,this.player.model.rotation, 0.1);
+                        // need camera rotation
+
+                    } else {
+                        this.player.translate(vec3.fromValues(-0.3, 0, 0));
+                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(-0.3, 0, 0));
+                    }
+                    break;
+
+                case "KeyW":
+                    if (e.getModifierState("Shift")) {
+                        mat4.rotateX(this.player.model.rotation,this.player.model.rotation, 0.1);
+                        
+                        // need camera rotation                                                                 
+                   
+                    } else {
+                        this.player.translate(vec3.fromValues(0, 0.3, 0));
+                        if (this.flag == 1) {
+                            vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, 0.3, 0));
+                        }
+                    }
+                    break;
+
+                case "KeyS":
+                    if (e.getModifierState("Shift")) {
+                        mat4.rotateX(this.player.model.rotation,this.player.model.rotation, -0.1);                    
+                        // need camera rotation                                                                 
+                   
+                    } else {
+                        this.player.translate(vec3.fromValues(0, -0.3, 0));
+                        
+                        if (this.flag == 1) {
+                            vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, -0.3, 0));
+                   
+                        }
+                    }
+                    break;
+                
+                case "KeyQ":
+                    if (e.getModifierState("Shift")) {
+                        mat4.rotateZ(this.player.model.rotation,this.player.model.rotation, 0.1); 
+                        // need camera rotation                                                                 
+                   
+                    } else {
+                        this.player.translate(vec3.fromValues(0, 0, 0.3));
+                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, 0, 0.3));
+                    }
+                    break;
+                
+                case "KeyE": 
+                    if (e.getModifierState("Shift")) {
+                     mat4.rotateZ(this.player.model.rotation,this.player.model.rotation, -0.1);                    
+                    // need camera rotation                                                                 
+               
+                    } else {
+                        this.player.translate(vec3.fromValues(0, 0, -0.3));
+                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, 0, -0.3));
+                    }
+                    break;
+
+                /*case "Space":
+                    console.log(this.bulletL.position);
+                    //e.preventDefault();
+                    console.log(this.bulletL);
+                    // if not collide with wall or meteors
+                    //this.bulletL.translate(vec3.fromValues(0,0,0.1));
+                    //this.bulletR.translate(vec3.fromValues(0,0,0.1));                  
+                    
+                    break;*/
 
 
 
@@ -104,9 +249,9 @@ class Game {
                 scale: vec3.fromValues(0.5, 0.5, 0.5)
             }, this.state);
 
-
+        //console.log(tempObject);
         //tempObject.constantRotate = true; // lets add a flag so we can access it later
-        this.spawnedObjects.push(tempObject); // add these to a spawned objects list
+        //this.spawnedObjects.push(tempObject); // add these to a spawned objects list
 
         // tempObject.collidable = true;
         // tempObject.onCollide = (object) => { // we can also set a function on an object without defining the function before hand!
@@ -123,11 +268,11 @@ class Game {
         // this.cube.rotate('x', deltaTime * 0.5);
 
         // example: Rotate all objects in the scene marked with a flag
-        // this.state.objects.forEach((object) => {
-        //     if (object.constantRotate) {
-        //         object.rotate('y', deltaTime * 0.5);
-        //     }
-        // });
+         this.state.objects.forEach((object) => {
+             if (object.constantRotate) {
+                 object.rotate('y', deltaTime * 0.5);
+             }
+         });
 
         // simulate a collision between the first spawned object and 'cube' 
         // if (this.spawnedObjects[0].collidable) {
@@ -135,9 +280,9 @@ class Game {
         // }
 
         // example: Rotate all the 'spawned' objects in the scene
-        // this.spawnedObjects.forEach((object) => {
-        //     object.rotate('y', deltaTime * 0.5);
-        // });
+         this.spawnedObjects.forEach((object) => {
+             object.rotate('y', deltaTime * 0.5);
+         });
 
 
         // example - call our collision check method on our cube
