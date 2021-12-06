@@ -5,9 +5,9 @@
                 "name": "bulletR",
                 "material": {
                     "diffuse": [
-                        0.5882,
-                        0.5882,
-                        0.5882
+                        0.1,
+                        1.0,
+                        0.3
                     ],
                     "ambient": [
                         0.3,
@@ -26,8 +26,8 @@
                 "type": "mesh",
                 "position": [
                     0.1300000101327896,
-                    1,
-                    -1.899999976158142
+                    0,
+                    2
                 ],
                 "scale": [
                     0.125,
@@ -54,16 +54,16 @@
                     0,
                     1
                 ],
-                "parent": null,
+                "parent":"spacecraft",
                 "model": "5.56mm.obj"
             },
             {
                 "name": "spacecraft",
                 "material": {
                     "diffuse": [
-                        0.5882,
-                        0.5882,
-                        0.5882
+                        0,
+                        0,
+                        1
                     ],
                     "ambient": [
                         0.3,
@@ -111,15 +111,16 @@
                     1
                 ],
                 "parent": null,
+                "children": ["bulletL", "bulletR"],
                 "model": "SmallSpaceFighter.obj"
             },
             {
                 "name": "bulletL",
                 "material": {
                     "diffuse": [
-                        0.5882,
-                        0.5882,
-                        0.5882
+                        0.1,
+                        1.0,
+                        0.3
                     ],
                     "ambient": [
                         0.3,
@@ -138,8 +139,8 @@
                 "type": "mesh",
                 "position": [
                     -0.5,
-                    1,
-                    -1.75
+                    0,
+                    2
                 ],
                 "scale": [
                     0.125,
@@ -166,7 +167,7 @@
                     0,
                     1
                 ],
-                "parent": null,
+                "parent": "spacecraft",
                 "model": "5.56mm.obj"
             },
             {
@@ -285,9 +286,9 @@
                 "name": "meteorS",
                 "material": {
                     "diffuse": [
-                        0.3607843137254902,
-                        0.3607843137254902,
-                        0.3607843137254902
+                        1,
+                        0,
+                        0
                     ],
                     "ambient": [
                         0.3,
@@ -305,14 +306,14 @@
                 },
                 "type": "mesh",
                 "position": [
-                    -10,
+                    15,
                     1,
                     0
                 ],
                 "scale": [
-                    15,
-                    15,
-                    3
+                    7,
+                    12,
+                    16
                 ],
                 "diffuseTexture": "default.jpg",
                 "normalTexture": "defaultNorm.jpg",
@@ -338,7 +339,7 @@
                 "model": "meteoroidS.obj"
             },
             {
-                "name": "background",
+                "name": "wall1",
                 "material": {
                     "diffuse": [
                         0,
@@ -394,7 +395,7 @@
                 "model": null
             },
             {
-                "name": "wall1",
+                "name": "wall2",
                 "material": {
                     "diffuse": [
                         0,
@@ -450,7 +451,7 @@
                 "model": null
             },
             {
-                "name": "wall2",
+                "name": "wall3",
                 "material": {
                     "diffuse": [
                         0,
@@ -506,7 +507,7 @@
                 "model": null
             },
             {
-                "name": "wall3",
+                "name": "wall4",
                 "material": {
                     "diffuse": [
                         0,
@@ -562,7 +563,7 @@
                 "model": null
             },
             {
-                "name": "wall4",
+                "name": "wall5",
                 "material": {
                     "diffuse": [
                         0,
@@ -603,6 +604,62 @@
                     0,
                     -1,
                     0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "parent": null,
+                "model": null
+            },
+            {
+                "name": "wall6",
+                "material": {
+                    "diffuse": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "ambient": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "n": "10",
+                    "shaderType": 3,
+                    "alpha": "1"
+                },
+                "type": "plane",
+                "position": [
+                    0,
+                    113,
+                    0
+                ],
+                "scale": [
+                    512,
+                    1,
+                    256
+                ],
+                "diffuseTexture": "space.png",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -1,
                     0,
                     0,
                     0,
@@ -670,7 +727,7 @@
                 "name": "mainCamera",
                 "position": [
                     0,
-                    75,
+                    113,
                     0
                 ],
                 "front": [
