@@ -31,4 +31,8 @@ function randomVec3(min, max) {
     )
 }
 
+function translate(bullet, translateVec) {
+    vec3.add(bullet.model.position, bullet.model.position, vec3.fromValues(translateVec[0], translateVec[1], translateVec[2]));
+  }
+
 

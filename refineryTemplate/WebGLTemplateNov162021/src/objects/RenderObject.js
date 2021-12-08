@@ -24,6 +24,9 @@ class RenderObject {
       position: vec3.fromValues(0.0, 0.0, 0.0),
       rotation: mat4.create(),
       scale: vec3.fromValues(1.0, 1.0, 1.0),
+      forward: object.forward ? object.forward : vec3.fromValues(0.0, 0.0, -1.0),
+      back: object.back ? object.back : vec3.fromValues(0.0, 0.0, 0.0),
+      dimensions: object.dimensions ? object.dimensions : vec3.fromValues(1.0, 1.0, 1.0),
       diffuseTexture: object.diffuseTexture ? object.diffuseTexture : "default.png",
       normalTexture: object.normalTexture ? object.normalTexture : "defaultNorm.png",
       texture: object.diffuseTexture ? getTextures(glContext, object.diffuseTexture) : null,
@@ -37,10 +40,16 @@ class RenderObject {
   rotate(axis, angle) {
     if (axis === 'x') {
       mat4.rotateX(this.model.rotation, this.model.rotation, angle)
+      vec3.rotateX(this.model.forward, this.model.forward, vec3.fromValues(0, 0, 0), angle)
+      vec3.rotateX(this.model.back, this.model.back, vec3.fromValues(0, 0, 0), angle)
     } else if (axis == 'y') {
       mat4.rotateY(this.model.rotation, this.model.rotation, angle)
+      vec3.rotateY(this.model.forward,this.model.forward, vec3.fromValues(0, 0, 0), angle)
+      vec3.rotateY(this.model.back, this.model.back, vec3.fromValues(0, 0, 0), angle)
     } else if (axis == 'z') {
       mat4.rotateZ(this.model.rotation, this.model.rotation, angle)
+      vec3.rotateZ(this.model.forward, this.model.forward, vec3.fromValues(0, 0, 0), angle)
+      vec3.rotateZ(this.model.back, this.model.back, vec3.fromValues(0, 0, 0), angle)
     }
   }
 

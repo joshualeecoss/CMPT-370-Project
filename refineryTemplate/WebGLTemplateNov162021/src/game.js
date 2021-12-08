@@ -3,13 +3,55 @@ class Game {
         this.state = state;
         this.spawnedObjects = [];
         this.collidableObjects = [];
+        this.projectiles = [];
+        this.canFire = false;
         this.flag = 0;
+        this.bulletSpeed = 20;
         
     }
 
     // example - we can add our own custom method to our game and call it using 'this.customMethod()'
     customMethod() {
         console.log("Custom method!");
+    }
+
+    setMovement(speed) {
+        this.speed = speed;
+    }
+
+    setDirection(direction) {
+        this.direction = direction;
+    }
+
+    fire(fire) {
+        this.canFire = fire;
+    }
+
+    
+    move(player, camera) {
+        if (this.direction === 0) {
+            player.translate(vec3.fromValues(0, 0, 0));
+        }
+        if (this.direction === 1 && this.flag == 0) {
+            player.translate(vec3.fromValues(player.model.forward[0] * this.speed, player.model.forward[1] * this.speed, player.model.forward[2] * this.speed));
+        } else if (this.direction === 1 && this.flag == 1) {
+            player.translate(vec3.fromValues(player.model.forward[0] * this.speed, player.model.forward[1] * this.speed, player.model.forward[2] * this.speed));
+            vec3.add(camera.position, camera.position, vec3.fromValues(player.model.forward[0] * this.speed, player.model.forward[1] * this.speed, player.model.forward[2] * this.speed));
+        }
+        if (this.direction === 4 && this.flag == 0) {
+            player.translate(vec3.fromValues(player.model.forward[0] * -this.speed, player.model.forward[1] * -this.speed, player.model.forward[2] * -this.speed));
+        } else if (this.direction === 4 && this.flag == 1) {
+            player.translate(vec3.fromValues(player.model.forward[0] * -this.speed, player.model.forward[1] * -this.speed, player.model.forward[2] * -this.speed));
+            vec3.add(camera.position, camera.position, vec3.fromValues(player.model.forward[0] * -this.speed, player.model.forward[1] * -this.speed, player.model.forward[2] * -this.speed));
+        }
+        if (this.direction === 2) {
+            player.rotate("y", 0.05);
+        }
+        if (this.direction === 3) {
+            player.rotate("y", -0.05);
+        }
+
+
     }
 
     createSphereCollider(object, radius, onCollide = null) {
@@ -56,14 +98,13 @@ class Game {
             }
             // BOX / SPHERE COLLISION
             else if (object.collider.type === "SPHERE" && otherObject.collider.type === "BOX") {
-                var x = Math.max(otherObject.model.position[0] - otherObject.collider.width / 2, Math.min(object.model.position[0], otherObject.model.position[0] + otherObject.collider.width / 2));
-                var y = Math.max(otherObject.model.position[1] - otherObject.collider.height / 2, Math.min(object.model.position[1], otherObject.model.position[1] + otherObject.collider.height / 2));
-                var z = Math.max(otherObject.model.position[2] - otherObject.collider.depth / 2, Math.min(object.model.position[2], otherObject.model.position[2] + otherObject.collider.depth / 2));
+                var x = Math.max(otherObject.model.position[0] - (otherObject.collider.width / 2), Math.min(object.model.position[0], otherObject.model.position[0] + (otherObject.collider.width / 2)));
+                var y = Math.max(otherObject.model.position[1] - (otherObject.collider.height / 2), Math.min(object.model.position[1], otherObject.model.position[1] + (otherObject.collider.height / 2)));
+                var z = Math.max(otherObject.model.position[2] - (otherObject.collider.depth / 2), Math.min(object.model.position[2], otherObject.model.position[2] + (otherObject.collider.depth / 2)));
                 
                 var distance = Math.sqrt((x - object.model.position[0]) * (x - object.model.position[0]) +
                                         (y - object.model.position[1]) * (y - object.model.position[1]) +
                                         (z - object.model.position[2]) * (z - object.model.position[2]));
-                
                 
                 if (distance < object.collider.radius) {
                     object.onCollide(otherObject);
@@ -72,10 +113,45 @@ class Game {
         });
     }
 
+    async createProjectile(projectiles) {
+        if (this.projectiles.length < 1) {
+            let newBullet = await spawnObject({
+                name: `new-Bullet`,
+                type: "mesh",
+                material: {
+                    diffuse: randomVec3(0, 1),
+                    ambient: vec3.fromValues(0.3, 0.3, 0.3),
+                    specular: vec3.fromValues(0.5, 0.5, 0.5),
+                },
+                model: "5.56mm.obj",
+                rotation: Object.assign({}, this.player.model.rotation),
+                forward: vec3.fromValues(this.player.model.forward[0], this.player.model.forward[1], this.player.model.forward[2]),
+                position: vec3.fromValues(this.player.model.position[0], this.player.model.position[1], this.player.model.position[2]),
+                scale: vec3.fromValues(0.125, 0.125, 0.125),
 
-    // runs once on startup after the scene loads the objects
+            }, this.state);
+
+            this.createSphereCollider(newBullet, 0.05);
+
+            newBullet.onCollide = (object) => {
+                if (object.collider.type === "BOX") {
+
+                    projectiles.pop();
+                    console.log("Bullet hit the ground");
+                    
+                    this.fire(false);
+                }
+            };
+            projectiles.push(newBullet);      
+        }
+        console.log(projectiles);
+        
+    }
+
+    // runs once on startup after the scene loads the objects 
     async onStart() {
         console.log("On start");
+        this.setMovement(0.3);
 
         // this just prevents the context menu from popping up when you right click
         // document.addEventListener("contextmenu", (e) => {
@@ -119,14 +195,23 @@ class Game {
         
         //console.log(this.bulletL.position);
 
-
-        this.wall1 = getObject(state, "wall4");
-        this.createBoxCollider(this.wall1, this.wall1.model.scale[0], this.wall1.model.scale[1], this.wall1.model.scale[2]);
+        this.floor = getObject(state, "wall1");
+        this.wall1 = getObject(state, "wall2");
+        this.wall2 = getObject(state, "wall3");
+        this.wall3 = getObject(state, "wall4");
+        this.wall4 = getObject(state, "wall5");
+        this.ceiling = getObject(state, "wall6");
+        this.createBoxCollider(this.wall1, this.wall1.model.dimensions[0], this.wall1.model.dimensions[1], this.wall1.model.dimensions[2]);
+        this.createBoxCollider(this.wall2, this.wall2.model.dimensions[0], this.wall2.model.dimensions[1], this.wall2.model.dimensions[2]);
+        this.createBoxCollider(this.wall3, this.wall3.model.dimensions[0], this.wall3.model.dimensions[1], this.wall3.model.dimensions[2]);
+        this.createBoxCollider(this.wall4, this.wall4.model.dimensions[0], this.wall4.model.dimensions[1], this.wall4.model.dimensions[2]);
+        this.createBoxCollider(this.floor, this.floor.model.dimensions[0], this.floor.model.dimensions[1], this.floor.model.dimensions[2]);
+        this.createBoxCollider(this.ceiling, this.ceiling.model.dimensions[0], this.ceiling.model.dimensions[1], this.ceiling.model.dimensions[2]);
 
         // example - create sphere colliders on our two objects as an example, we give 2 objects colliders otherwise
         // no collision can happen
-        this.createSphereCollider(this.player, 1.5);
-        this.createSphereCollider(this.meteor, 1);
+        this.createSphereCollider(this.player, 2.5);
+        
         // this.createSphereCollider(this.cube, 0.5, (otherObject) => {
         //     console.log(`This is a custom collision of ${otherObject.name}`)
         // });
@@ -145,8 +230,10 @@ class Game {
         }*/
         // example - setting up a key press event to move an object in the scene
         document.addEventListener("keydown", (e) => {
-            e.preventDefault();
-            console.log(this.flag);
+            if (e.defaultPrevented) {
+                return; // Do nothing if the event was already processed
+            }
+            // console.log(this.flag);
            
 
             switch (e.code) {
@@ -154,31 +241,36 @@ class Game {
                     //e.preventDefault();
                     if (this.flag == 0){                      
                         
-                        this.mainCamera.position[0] = this.player.model.position[0];
-                        this.mainCamera.position[1] = this.player.model.position[1] + 1.2;
-                        this.mainCamera.position[2] = this.player.model.position[2] + 1.5;
-                        this.mainCamera.front = this.player.centroid;  
+                        this.mainCamera.position[0] = this.player.model.position[0] + this.player.centroid[0];
+                        this.mainCamera.position[1] = this.player.model.position[1] + this.player.centroid[1] + 1.5;
+                        this.mainCamera.position[2] = this.player.model.position[2] + this.player.centroid[2];
+                        this.mainCamera.front = this.player.model.forward;  
+                        this.mainCamera.up = vec3.fromValues(0, 1, 0);    
                         this.flag = 1;   
                         
                     } else {  
-                        this.mainCamera.position = vec3.fromValues(0, 113, 0); 
-                        this.mainCamera.front = vec3.fromValues(0, -1, 0);                   
+                        this.mainCamera.position = vec3.fromValues(0, 98, 0); 
+                        this.mainCamera.front = vec3.fromValues(0, -1, 0);   
+                        this.mainCamera.up = vec3.fromValues(0, 0, 1);    
+                                
                         this.flag = 0;
                                                    
                     }                                       
                     break;
 
                 case "KeyA":
-                    console.log(this.player.model);
-                    console.log(this.mainCamera);
+                    // console.log(this.player.model);
+                    // console.log(this.mainCamera);
                     if (e.getModifierState("Shift")) {
                         mat4.rotateY(this.player.model.rotation,this.player.model.rotation, -0.1);
                         // need camera rotation
-                        
 
                     } else {
-                        this.player.translate(vec3.fromValues(0.3, 0, 0));
-                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0.3, 0, 0));
+                        this.setDirection(2);
+                        
+                        
+                        
+                        
                     }
                     break;
 
@@ -188,8 +280,9 @@ class Game {
                         // need camera rotation
 
                     } else {
-                        this.player.translate(vec3.fromValues(-0.3, 0, 0));
-                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(-0.3, 0, 0));
+                        this.setDirection(3);
+                        
+
                     }
                     break;
 
@@ -200,12 +293,10 @@ class Game {
                         // need camera rotation                                                                 
                    
                     } else {
-                        this.player.translate(vec3.fromValues(0, 0.3, 0));
-                        if (this.flag == 1) {
-                            vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, 0.3, 0));
-                        }
+                        this.setDirection(1);
                     }
                     break;
+
 
                 case "KeyS":
                     if (e.getModifierState("Shift")) {
@@ -213,100 +304,56 @@ class Game {
                         // need camera rotation                                                                 
                    
                     } else {
-                        this.player.translate(vec3.fromValues(0, -0.3, 0));
-                        
-                        if (this.flag == 1) {
-                            vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, -0.3, 0));
-                   
-                        }
+                        this.setDirection(4);
                     }
+                    break;
+            
+                case "Space":
+                    this.createProjectile(this.projectiles);
+                    this.fire(true);
                     break;
                 
-                case "KeyQ":
-                    if (e.getModifierState("Shift")) {
-                        mat4.rotateZ(this.player.model.rotation,this.player.model.rotation, 0.1); 
-                        // need camera rotation                                                                 
-                   
-                    } else {
-                        this.player.translate(vec3.fromValues(0, 0, 0.3));
-                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, 0, 0.3));
-                    }
-                    break;
-                
-                case "KeyE": 
-                    if (e.getModifierState("Shift")) {
-                     mat4.rotateZ(this.player.model.rotation,this.player.model.rotation, -0.1);                    
-                    // need camera rotation                                                                 
-               
-                    } else {
-                        this.player.translate(vec3.fromValues(0, 0, -0.3));
-                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, 0, -0.3));
-                    }
-                    break;
-
-                /*case "Space":
-                    console.log(this.bulletL.position);
-                    //e.preventDefault();
-                    console.log(this.bulletL);
-                    // if not collide with wall or meteors
-                    //this.bulletL.translate(vec3.fromValues(0,0,0.1));
-                    //this.bulletR.translate(vec3.fromValues(0,0,0.1));                  
-                    
-                    break;*/
 
 
 
                 default:
                     break;
+                    
             }
+            e.preventDefault();
+        }, true);
+
+        document.addEventListener("keyup", (e) => {
+            if (e.defaultPrevented) {
+                return; // Do nothing if the event was already processed
+            }
+            this.setDirection(0);
+            switch (e.code) {
+                case "Space":
+                    // this.projectiles[0].parent = null;
+                    break;
+            }
+            
+            
+            e.preventDefault();
+            
         });
 
-        console.log(this.collidableObjects);
-        
 
-        //example: spawn some stuff before the scene starts
-        // for (let i = 0; i < 2; i++) {
-        //     for (let j = 0; j < 2; j++) {
-        //         for (let k = 0; k < 2; k++) {
-        //             spawnObject({
-        //                 name: `new-Object${i}${j}${k}`,
-        //                 type: "spacecraft",
-        //                 material: {
-        //                     diffuse: randomVec3(0, 1)
-        //                 },
-        //                 position: vec3.fromValues(4 - i, 1.0, 4 - k),
-        //                 scale: vec3.fromValues(1.0, 1.0, 1.0),
-        //             }, this.state);
-        //         }
-        //     }
-        // }
 
-        // for (let i = 0; i < 10; i++) {
-        //     let tempObject = await spawnObject({
-        //         name: `new-Object${i}`,
-        //         type: "spacecraft",
-        //         material: {
-        //             diffuse: randomVec3(0, 1)
-        //         },
-        //         position: vec3.fromValues(4 - i, 0, 0),
-        //         scale: vec3.fromValues(0.5, 0.5, 0.5)
-        //     }, this.state);
-
-        //console.log(tempObject);
         //tempObject.constantRotate = true; // lets add a flag so we can access it later
-        //this.spawnedObjects.push(tempObject); // add these to a spawned objects list
+         // add these to a spawned objects list
 
-        // tempObject.collidable = true;
-        // tempObject.onCollide = (object) => { // we can also set a function on an object without defining the function before hand!
-        //     console.log(`I collided with ${object.name}!`);
-        // };
-        // }
+        //tempObject.collidable = true;
+        //tempObject.onCollide = (object) => { // we can also set a function on an object without defining the function before hand!
+        //    console.log(`I collided with ${object.name}!`);
+        //};
 
         this.player.onCollide = (object) => {
             if (object.name === "meteorL") {
                 console.log("You died!");
             } else if (object.collider.type === "BOX") {
-                console.log("Out of Bounds");
+                this.setMovement(0.0);
             }
             
         };
@@ -315,12 +362,24 @@ class Game {
     // Runs once every frame non stop after the scene loads
     onUpdate(deltaTime) {
         // TODO - Here we can add game logic, like moving game objects, detecting collisions, you name it. Examples of functions can be found in sceneFunctions
-
+        this.move(this.player, this.mainCamera);
+        
+        
+        if (this.canFire) {
+            let velocity = Object.assign({}, this.projectiles[0].model.forward);
+            translate(this.projectiles[0], vec3.fromValues(
+                velocity[0] * this.bulletSpeed * deltaTime,
+                velocity[1] * this.bulletSpeed * deltaTime,
+                velocity[2] * this.bulletSpeed * deltaTime));
+            this.checkCollision(this.projectiles[0]);
+            //this.fire();
+        }
+        
         // example: Rotate a single object we defined in our start method
         // this.cube.rotate('x', deltaTime * 0.5);
 
         // example: Rotate all objects in the scene marked with a flag
-         this.state.objects.forEach((object) => {
+        this.state.objects.forEach((object) => {
              if (object.constantRotate) {
                  object.rotate('y', deltaTime * 0.5);
              }
@@ -340,5 +399,7 @@ class Game {
         // example - call our collision check method on our cube
         // this.checkCollision(this.cube);
         this.checkCollision(this.player);
+        
+
     }
 }

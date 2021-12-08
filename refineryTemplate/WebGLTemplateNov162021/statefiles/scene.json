@@ -90,6 +90,12 @@
                     1,
                     1
                 ],
+                "back": [
+                    0,
+                    1.2,
+                    1.5
+                ],
+                
                 "diffuseTexture": "default.jpg",
                 "normalTexture": "defaultNorm.jpg",
                 "rotation": [
@@ -147,6 +153,7 @@
                     0.125,
                     0.125
                 ],
+                "firing" : false,
                 "diffuseTexture": "default.jpg",
                 "normalTexture": "defaultNorm.jpg",
                 "rotation": [
@@ -371,6 +378,11 @@
                     1,
                     256
                 ],
+                "dimensions": [
+                    512,
+                    1,
+                    256
+                ],
                 "diffuseTexture": "space.png",
                 "normalTexture": "defaultNorm.jpg",
                 "rotation": [
@@ -426,6 +438,11 @@
                     512,
                     1,
                     256
+                ],
+                "dimensions" : [
+                    512,
+                    256,
+                    0.0005
                 ],
                 "diffuseTexture": "space.png",
                 "normalTexture": "defaultNorm.jpg",
@@ -483,6 +500,11 @@
                     1,
                     256
                 ],
+                "dimensions" : [
+                    512,
+                    256,
+                    1
+                ],
                 "diffuseTexture": "space.png",
                 "normalTexture": "defaultNorm.jpg",
                 "rotation": [
@@ -537,6 +559,11 @@
                 "scale": [
                     256,
                     1,
+                    256
+                ],
+                "dimensions": [
+                    1,
+                    256,
                     256
                 ],
                 "diffuseTexture": "space.png",
@@ -595,6 +622,11 @@
                     1,
                     256
                 ],
+                "dimensions": [
+                    1,
+                    256,
+                    256
+                ],
                 "diffuseTexture": "space.png",
                 "normalTexture": "defaultNorm.jpg",
                 "rotation": [
@@ -647,6 +679,11 @@
                     0
                 ],
                 "scale": [
+                    512,
+                    1,
+                    256
+                ],
+                "dimensions": [
                     512,
                     1,
                     256
@@ -727,7 +764,7 @@
                 "name": "mainCamera",
                 "position": [
                     0,
-                    113,
+                    98,
                     0
                 ],
                 "front": [
