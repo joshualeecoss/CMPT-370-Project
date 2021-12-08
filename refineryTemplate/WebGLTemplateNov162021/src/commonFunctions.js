@@ -409,6 +409,14 @@ function parseSceneFile(file, state) {
             })
     })
 }
+function addSphere(object, state, vertShader = null, fragShader = null) {
+    let tempSphere = new Sphere(state.gl, object);
+    tempSphere.vertShader = vertShader ? vertShader : state.vertShaderSample;
+    tempSphere.fragShader = fragShader ? fragShader : state.fragShaderSample;
+    tempSphere.setup();
+    addObjectToScene(state, tempSphere);
+    return tempSphere;
+}
 
 function addCube(object, state, vertShader = null, fragShader = null) {
     let tempCube = new Cube(state.gl, object);

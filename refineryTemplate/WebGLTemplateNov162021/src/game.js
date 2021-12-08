@@ -5,7 +5,9 @@ class Game {
         this.collidableObjects = [];
         this.projectiles = [];
         this.canFire = false;
+        this.asteroids = [];
         this.flag = 0;
+        this.life = 3;
         this.bulletSpeed = 20;
         
     }
@@ -148,6 +150,45 @@ class Game {
         
     }
 
+    wallBallCollider(object) {
+        return (object.model.position[2] <= -75);
+    }
+
+    ballCollider(object, otherObject) {
+        var distance = Math.sqrt((object.model.position[0] - otherObject.model.position[0]) * (object.model.position[0] - otherObject.model.position[0]) +
+                                (object.model.position[1] - otherObject.model.position[1]) * (object.model.position[1] - otherObject.model.position[1]) +
+                                (object.model.position[2] - otherObject.model.position[2]) * (object.model.position[2] - otherObject.model.position[2]));
+        return distance < 5;
+    }
+    
+    ballShipCollider(ball, r, ship) {
+        //console.log("ship", ship);
+        //console.log("ball", ball);
+        var x = Math.max(ship.model.position[0] - 2, Math.min(ball.model.position[0], ship.model.position[0] + 2));
+        var y = Math.max(ship.model.position[1] - 1, Math.min(ball.model.position[1], ship.model.position[1] + 1));
+        var z = Math.max(ship.model.position[2] - 2, Math.min(ball.model.position[2], ship.model.position[2] + 2));
+        var distance = Math.sqrt((x - ball.model.position[0]) * (x - ball.model.position[0]) + 
+                                (y - ball.model.position[1]) * (y - ball.model.position[1]) +
+                                (z - ball.model.position[2]) * (y - ball.model.position[2]));
+        return distance < r;
+    }
+
+    endGame() {
+        this.life--;
+        if (this.life <= 1) {
+            //document.getElementById("restart").innerHTML = "Press P to Restart Game";
+            document.getElementById("gameEnd").innerHTML = "GAME OVER";
+            //document.getElementById("life").innerHTML = "";
+           
+            //cancelAnimationFrame();
+        }
+        else {
+            //document.getElementById("life").innerHTML = "You have " + this.life + " life left";
+            //document.getElementById("restart").innerHTML = "Press P to Restart Game";
+        }
+                
+    }
+
     // runs once on startup after the scene loads the objects 
     async onStart() {
         console.log("On start");
@@ -167,34 +208,6 @@ class Game {
         this.bulletR = getObject(state, "bulletR");   
         this.mainCamera = state.settings.camera;
         
-
-
-        /*this.mainCamera.right = vec3.fromValues(-1.0, 0.0, 0.0);
-        this.mainCamera.center = vec3.fromValues(0.5, 0.5, 0.0);
-        vec3.subtract(this.mainCamera.front, this.mainCamera.center, this.mainCamera.position);
-        vec3.normalize(this.mainCamera.front, this.mainCamera.front);
-        vec3.cross(this.mainCamera.right, this.mainCamera.front, this.mainCamera.up);*/
-
-        /* vec3.subtract(this.mainCamera.front, this.mainCamera.center, this.mainCamera.position);
-        vec3.normalize(this.mainCamera.front, this.mainCamera.front);
-        vec3.cross(this.mainCamera.right, this.mainCamera.front, this.mainCamera.up);
-        vec3.cross(this.mainCamera.up, this.mainCamera.right, this.mainCamera.front);
-        vec3.multiply(this.mainCamera.right, this.mainCamera.right, vec3.fromValues(0.1, 0.1, 0.1));
-        vec3.subtract(this.mainCamera.center, this.mainCamera.center, this.mainCamera.up); */
-
-        /*vec3.subtract(this.mainCamera.front, this.mainCamera.center, this.mainCamera.position);
-        vec3.normalize(this.mainCamera.front, this.mainCamera.front);
-        vec3.cross(this.mainCamera.right, this.mainCamera.front, this.mainCamera.up);
-        vec3.multiply(this.mainCamera.right, this.mainCamera.right, vec3.fromValues(0.1, 0.1, 0.1));
-        vec3.add(this.mainCamera.center, this.mainCamera.center, this.mainCamera.right);*/
-
-        
-        //console.log(state.settings);
-        //console.log(this.secondcamera);
-        //console.log(this.player);
-        
-        //console.log(this.bulletL.position);
-
         this.floor = getObject(state, "wall1");
         this.wall1 = getObject(state, "wall2");
         this.wall2 = getObject(state, "wall3");
@@ -216,18 +229,7 @@ class Game {
         //     console.log(`This is a custom collision of ${otherObject.name}`)
         // });
         // this.createSphereCollider(otherCube, 0.5);
-        /*if (this.flag == 0) { // flag = 0 ; top view    
-                
-            this.mainCamera.position = vec3.fromValues(0, 113, 0); 
-            this.mainCamera.front = vec3.fromValues(0, -1, 0);
-        }
-        else if (this.flag == 1) { // flag = 1 ; spaceship view
-            
-            this.mainCamera.position[0] = this.player.model.position[0];
-            this.mainCamera.position[1] = this.player.model.position[1] + 1.2;
-            this.mainCamera.position[2] = this.player.model.position[2] + 1.5;
-            this.mainCamera.front = this.player.centroid;
-        }*/
+       
         // example - setting up a key press event to move an object in the scene
         document.addEventListener("keydown", (e) => {
             if (e.defaultPrevented) {
@@ -259,63 +261,40 @@ class Game {
                     break;
 
                 case "KeyA":
-                    // console.log(this.player.model);
-                    // console.log(this.mainCamera);
-                    if (e.getModifierState("Shift")) {
-                        mat4.rotateY(this.player.model.rotation,this.player.model.rotation, -0.1);
-                        // need camera rotation
-
-                    } else {
-                        this.setDirection(2);
-                        
-                        
-                        
-                        
-                    }
+                    this.setDirection(2);                   
                     break;
 
-                case "KeyD":
-                    if (e.getModifierState("Shift")) {
-                        mat4.rotateY(this.player.model.rotation,this.player.model.rotation, 0.1);
-                        // need camera rotation
-
-                    } else {
-                        this.setDirection(3);
-                        
-
-                    }
+                case "KeyD":                  
+                    this.setDirection(3);                  
                     break;
 
-                case "KeyW":
-                    if (e.getModifierState("Shift")) {
-                        mat4.rotateX(this.player.model.rotation,this.player.model.rotation, 0.1);
-                        
-                        // need camera rotation                                                                 
-                   
-                    } else {
-                        this.setDirection(1);
-                    }
+                case "KeyW":                   
+                    this.setDirection(1);                    
                     break;
-
 
                 case "KeyS":
-                    if (e.getModifierState("Shift")) {
-                        mat4.rotateX(this.player.model.rotation,this.player.model.rotation, -0.1);                    
-                        // need camera rotation                                                                 
-                   
-                    } else {
-                        this.setDirection(4);
+                    this.setDirection(4);
+                    break;
+
+                case "KeyQ":
+                    this.player.translate(vec3.fromValues(0, 1, 0));
+                    if (this.flag == 1) {
+                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, 1, 0));
                     }
                     break;
-            
+
+                case "KeyE":   
+                    this.player.translate(vec3.fromValues(0, -1, 0));  
+                    if (this.flag == 1) {                      
+                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, -1, 0));                      
+                    }                
+                    break;
+
                 case "Space":
                     this.createProjectile(this.projectiles);
                     this.fire(true);
                     break;
                 
-
-
-
                 default:
                     break;
                     
@@ -357,6 +336,30 @@ class Game {
             }
             
         };
+
+        // spawning meteors 
+        for (let i = 0; i < 30; i++) {
+            this.posX = randomInt(-110, 110);
+        
+            this.sphere = await spawnObject({
+                name: `meteor${i}`,
+                type: "sphere",
+                material: {
+                    diffuse: randomVec3(0, 1),
+                },
+                position: vec3.fromValues(this.posX, 2, 90),
+                scale: vec3.fromValues(5, 5, 5),
+                radius: 1,
+                horizSegments:25,
+                vertSegments:25,
+                diffuseTexture: "crater.jpg"
+            }, this.state);
+            
+        
+        this.sphere.constantRotate = true;
+        this.asteroids.push(this.sphere);
+       
+        }  
     }
 
     // Runs once every frame non stop after the scene loads
@@ -374,6 +377,31 @@ class Game {
             this.checkCollision(this.projectiles[0]);
             //this.fire();
         }
+
+        for (let k = 0; k< this.asteroids.length; k++) {
+            for (let j = 0; j < this.asteroids.length; j++){
+                if (this.asteroids[k] != this.asteroids[j]){
+                    if (this.ballCollider(this.asteroids[k], this.asteroids[j])) {
+                        this.asteroids[j].model.position[2] += 6;
+                        this.asteroids[j].model.position[1] += 6;
+                        if (this.asteroids[j].model.position[1] >= 110) {
+                            this.asteroids[j].model.position[1] = 2;
+                        }
+                       
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < this.asteroids.length; i++){
+            //console.log("this", this.player);
+            if (this.ballShipCollider(this.asteroids[i], 2.5, this.player)) {
+                console.log("collision!");
+                this.endGame();
+                
+            }
+        }
+        
         
         // example: Rotate a single object we defined in our start method
         // this.cube.rotate('x', deltaTime * 0.5);
@@ -385,6 +413,7 @@ class Game {
              }
          });
 
+
         // simulate a collision between the first spawned object and 'cube' 
         // if (this.spawnedObjects[0].collidable) {
         //     this.spawnedObjects[0].onCollide(this.cube);
@@ -395,6 +424,19 @@ class Game {
              object.rotate('y', deltaTime * 0.5);
          });
 
+         this.asteroids.forEach((object) => {
+            object.rotate('x', deltaTime * 0.5);
+           
+        });
+
+         for (let i = 0; i < this.asteroids.length; i++) {
+            let time = deltaTime * (i + 1);
+            
+            this.asteroids[i].translate(vec3.fromValues(0,0,time * -0.3));
+            if (this.wallBallCollider(this.asteroids[i])) {
+                this.asteroids[i].model.position[2] = 90; 
+            }
+         }
 
         // example - call our collision check method on our cube
         // this.checkCollision(this.cube);
