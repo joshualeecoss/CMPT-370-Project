@@ -186,6 +186,8 @@ async function main() {
             addPlane(object, state);
         } else if (object.type.includes("Custom")) {
             addCustom(object, state);
+        } else if (object.type === "sphere") {
+            addSphere(object, state);
         }
     }
 
@@ -221,12 +223,6 @@ function randomInt(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-// duplicate
-function dupMeteors(object) {
-    //copies basic properties and instantiate all buffers
-}
-
-
 /**
  * 
  * @param {gl context} gl 
@@ -242,38 +238,6 @@ function startRendering(gl, state) {
         now *= 0.001; // convert to seconds
         const deltaTime = now - then;
         then = now;
-
-        let meteorS = getObject(state, "meteorL");
-        let meteorL = getObject(state, "meteorS");
-        let bulletL = getObject(state, "bulletL");
-        let bulletR = getObject(state, "bulletR");
-        //console.log(state);
-        //gl.drawArraysInstanced(gl.TRIANGLES,0, object.buffers.numVertices/3, 2);
-        //if (matrices.length !== 0) {
-            //for (let i = 0; i < 20; i++) {
-                
-                //meteorL.model.position = vec3.fromValues(randomInt(10, 50));
-                //matrices[i].setup();
-            //}
-        //}
-
-        mat4.rotateY(meteorS.model.rotation, meteorS.model.rotation, 0.3 * deltaTime);
-        mat4.rotateY(meteorL.model.rotation, meteorS.model.rotation, 0.1 * deltaTime);
-        
-    
-        /*document.addEventListener("keydown", (event) => {
-            var object = state.objects;
-            switch (event.code) {
-                case "Space":
-                    console.log("works");         
-                    vec3.add(bulletL.model.position, bulletL.model.position, vec3.fromValues(0.1, 0.1, 0));
-                break;
-            default:
-                break;
-            }
-        });*/
-        
-
 
         state.deltaTime = deltaTime;
         drawScene(gl, deltaTime, state);
@@ -390,16 +354,7 @@ function drawScene(gl, deltaTime, state) {
                 }
             }
 
-            //try
-            /*if (object.name == "meteorS") {
-                for (let i = 0; i < 20; i++) {
-                    //matrices.push(state);
-                    addObjectToScene(state, object);
-                    object.position = vec3.fromValues(randomInt(10, 50), randomInt(10, 50), randomInt(10, 50));
-                    
-                }
-            }*/
-
+           
             {
                 // Bind the buffer we want to draw
                 gl.bindVertexArray(object.buffers.vao);
