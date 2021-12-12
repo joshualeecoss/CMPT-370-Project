@@ -28,6 +28,9 @@ class Game {
     fire(fire) {
         this.canFire = fire;
     }
+    endGame() {
+        document.getElementById("gameEnd").innerHTML = "GAME OVER";     
+    }
 
     
     move(player, camera) {
@@ -164,30 +167,16 @@ class Game {
     ballShipCollider(ball, r, ship) {
         //console.log("ship", ship);
         //console.log("ball", ball);
-        var x = Math.max(ship.model.position[0] - 2, Math.min(ball.model.position[0], ship.model.position[0] + 2));
+        var x = Math.max(ship.model.position[0] - 1.5, Math.min(ball.model.position[0], ship.model.position[0] + 1.5));
         var y = Math.max(ship.model.position[1] - 1, Math.min(ball.model.position[1], ship.model.position[1] + 1));
-        var z = Math.max(ship.model.position[2] - 2, Math.min(ball.model.position[2], ship.model.position[2] + 2));
+        var z = Math.max(ship.model.position[2] - 1.65, Math.min(ball.model.position[2], ship.model.position[2] + 1.65));
         var distance = Math.sqrt((x - ball.model.position[0]) * (x - ball.model.position[0]) + 
                                 (y - ball.model.position[1]) * (y - ball.model.position[1]) +
                                 (z - ball.model.position[2]) * (y - ball.model.position[2]));
         return distance < r;
     }
 
-    endGame() {
-        this.life--;
-        if (this.life <= 1) {
-            //document.getElementById("restart").innerHTML = "Press P to Restart Game";
-            document.getElementById("gameEnd").innerHTML = "GAME OVER";
-            //document.getElementById("life").innerHTML = "";
-           
-            //cancelAnimationFrame();
-        }
-        else {
-            //document.getElementById("life").innerHTML = "You have " + this.life + " life left";
-            //document.getElementById("restart").innerHTML = "Press P to Restart Game";
-        }
-                
-    }
+    
 
     // runs once on startup after the scene loads the objects 
     async onStart() {
@@ -327,15 +316,18 @@ class Game {
         //tempObject.onCollide = (object) => { // we can also set a function on an object without defining the function before hand!
         //    console.log(`I collided with ${object.name}!`);
         //};
-
+        
         this.player.onCollide = (object) => {
-            if (object.name === "meteorL") {
+            if (object.name === "meteor[i]") {
                 console.log("You died!");
             } else if (object.collider.type === "BOX") {
                 this.setMovement(0.0);
             }
             
         };
+
+       
+    
 
         // spawning meteors 
         for (let i = 0; i < 30; i++) {
@@ -366,8 +358,6 @@ class Game {
     onUpdate(deltaTime) {
         // TODO - Here we can add game logic, like moving game objects, detecting collisions, you name it. Examples of functions can be found in sceneFunctions
         this.move(this.player, this.mainCamera);
-        
-        
         if (this.canFire) {
             let velocity = Object.assign({}, this.projectiles[0].model.forward);
             translate(this.projectiles[0], vec3.fromValues(
@@ -375,15 +365,17 @@ class Game {
                 velocity[1] * this.bulletSpeed * deltaTime,
                 velocity[2] * this.bulletSpeed * deltaTime));
             this.checkCollision(this.projectiles[0]);
+            //this.asteroids[i].model.position = vec3.fromValues(0, -5, 0);
             //this.fire();
-        }
+        }         
+    
 
         for (let k = 0; k< this.asteroids.length; k++) {
             for (let j = 0; j < this.asteroids.length; j++){
                 if (this.asteroids[k] != this.asteroids[j]){
                     if (this.ballCollider(this.asteroids[k], this.asteroids[j])) {
                         this.asteroids[j].model.position[2] += 6;
-                        this.asteroids[j].model.position[1] += 6;
+                        this.asteroids[j].model.position[1] += 8;
                         if (this.asteroids[j].model.position[1] >= 110) {
                             this.asteroids[j].model.position[1] = 2;
                         }
@@ -393,14 +385,18 @@ class Game {
             }
         }
 
+        
+        
         for (let i = 0; i < this.asteroids.length; i++){
             //console.log("this", this.player);
             if (this.ballShipCollider(this.asteroids[i], 2.5, this.player)) {
-                console.log("collision!");
+                //console.log("collision!");
                 this.endGame();
                 
             }
+            
         }
+       
         
         
         // example: Rotate a single object we defined in our start method
