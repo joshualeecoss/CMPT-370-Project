@@ -167,9 +167,9 @@ class Game {
     ballShipCollider(ball, r, ship) {
         //console.log("ship", ship);
         //console.log("ball", ball);
-        var x = Math.max(ship.model.position[0] - 1.5, Math.min(ball.model.position[0], ship.model.position[0] + 1.5));
+        var x = Math.max(ship.model.position[0] - 1.1, Math.min(ball.model.position[0], ship.model.position[0] + 1.1));
         var y = Math.max(ship.model.position[1] - 1, Math.min(ball.model.position[1], ship.model.position[1] + 1));
-        var z = Math.max(ship.model.position[2] - 1.65, Math.min(ball.model.position[2], ship.model.position[2] + 1.65));
+        var z = Math.max(ship.model.position[2] - 1.1, Math.min(ball.model.position[2], ship.model.position[2] + 1.1));
         var distance = Math.sqrt((x - ball.model.position[0]) * (x - ball.model.position[0]) + 
                                 (y - ball.model.position[1]) * (y - ball.model.position[1]) +
                                 (z - ball.model.position[2]) * (y - ball.model.position[2]));
