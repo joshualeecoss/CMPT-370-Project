@@ -12,9 +12,15 @@ class Game {
         
     }
 
-    // example - we can add our own custom method to our game and call it using 'this.customMethod()'
-    customMethod() {
-        console.log("Custom method!");
+    containsObject(obj, list) {
+        var i;
+        for (i = 0; i < list.length; i++) {
+            if (list[i] === obj) {
+                return true;
+            }
+        }
+    
+        return false;
     }
 
     setMovement(speed) {
@@ -54,6 +60,19 @@ class Game {
         }
         if (this.direction === 3) {
             player.rotate("y", -0.05);
+        }
+
+        if (this.direction === 5) {
+            player.translate(vec3.fromValues(0, this.speed, 0));
+            if (this.flag == 1) {
+                vec3.add(camera.position, camera.position, vec3.fromValues(0, this.speed, 0));
+            }
+        }
+        if (this.direction === 6) {
+            player.translate(vec3.fromValues(0, -this.speed, 0));  
+            if (this.flag == 1) {                      
+                vec3.add(camera.position, camera.position, vec3.fromValues(0, -this.speed, 0));                      
+            }      
         }
 
 
@@ -119,36 +138,23 @@ class Game {
     }
 
     async createProjectile(projectiles) {
-        if (this.projectiles.length < 1) {
-            let newBullet = await spawnObject({
-                name: `new-Bullet`,
-                type: "mesh",
-                material: {
-                    diffuse: randomVec3(0, 1),
-                    ambient: vec3.fromValues(0.3, 0.3, 0.3),
-                    specular: vec3.fromValues(0.5, 0.5, 0.5),
-                },
-                model: "5.56mm.obj",
-                rotation: Object.assign({}, this.player.model.rotation),
-                forward: vec3.fromValues(this.player.model.forward[0], this.player.model.forward[1], this.player.model.forward[2]),
-                position: vec3.fromValues(this.player.model.position[0], this.player.model.position[1], this.player.model.position[2]),
-                scale: vec3.fromValues(0.125, 0.125, 0.125),
+        let newBullet = await spawnObject({
+            name: `new-Bullet`,
+            type: "mesh",
+            material: {
+                diffuse: randomVec3(0, 1),
+                ambient: vec3.fromValues(0.3, 0.3, 0.3),
+                specular: vec3.fromValues(0.5, 0.5, 0.5),
+            },
+            model: "5.56mm.obj",
+            rotation: Object.assign({}, this.player.model.rotation),
+            forward: vec3.fromValues(this.player.model.forward[0], this.player.model.forward[1], this.player.model.forward[2]),
+            position: vec3.fromValues(this.player.model.position[0], this.player.model.position[1], this.player.model.position[2]),
+            scale: vec3.fromValues(0.125, 0.125, 0.125),
 
-            }, this.state);
+        }, this.state);
 
-            this.createSphereCollider(newBullet, 0.05);
-
-            newBullet.onCollide = (object) => {
-                if (object.collider.type === "BOX") {
-
-                    projectiles.pop();
-                    console.log("Bullet hit the ground");
-                    
-                    this.fire(false);
-                }
-            };
-            projectiles.push(newBullet);      
-        }
+        projectiles.push(newBullet);      
         console.log(projectiles);
         
     }
@@ -266,17 +272,11 @@ class Game {
                     break;
 
                 case "KeyQ":
-                    this.player.translate(vec3.fromValues(0, 1, 0));
-                    if (this.flag == 1) {
-                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, 1, 0));
-                    }
+                    this.setDirection(5);
                     break;
 
                 case "KeyE":   
-                    this.player.translate(vec3.fromValues(0, -1, 0));  
-                    if (this.flag == 1) {                      
-                        vec3.add(this.mainCamera.position, this.mainCamera.position, vec3.fromValues(0, -1, 0));                      
-                    }                
+                    this.setDirection(6);
                     break;
 
                 case "Space":
@@ -298,7 +298,6 @@ class Game {
             this.setDirection(0);
             switch (e.code) {
                 case "Space":
-                    // this.projectiles[0].parent = null;
                     break;
             }
             
@@ -307,19 +306,10 @@ class Game {
             
         });
 
-
-
-        //tempObject.constantRotate = true; // lets add a flag so we can access it later
-         // add these to a spawned objects list
-
-        //tempObject.collidable = true;
-        //tempObject.onCollide = (object) => { // we can also set a function on an object without defining the function before hand!
-        //    console.log(`I collided with ${object.name}!`);
-        //};
         
         this.player.onCollide = (object) => {
-            if (object.name === "meteor[i]") {
-                console.log("You died!");
+            if (object.collider.type === "SPHERE" && object.type === "sphere") {
+                this.endGame();
             } else if (object.collider.type === "BOX") {
                 this.setMovement(0.0);
             }
@@ -346,6 +336,7 @@ class Game {
                 vertSegments:25,
                 diffuseTexture: "crater.jpg"
             }, this.state);
+            this.createSphereCollider(this.sphere, 2.5);
             
         
         this.sphere.constantRotate = true;
@@ -358,16 +349,37 @@ class Game {
     onUpdate(deltaTime) {
         // TODO - Here we can add game logic, like moving game objects, detecting collisions, you name it. Examples of functions can be found in sceneFunctions
         this.move(this.player, this.mainCamera);
-        if (this.canFire) {
-            let velocity = Object.assign({}, this.projectiles[0].model.forward);
-            translate(this.projectiles[0], vec3.fromValues(
+        // if (this.canFire) {
+        for (let i = 0; i < this.projectiles.length; i++) {
+            let velocity = Object.assign({}, this.projectiles[i].model.forward);
+            translate(this.projectiles[i], vec3.fromValues(
                 velocity[0] * this.bulletSpeed * deltaTime,
                 velocity[1] * this.bulletSpeed * deltaTime,
                 velocity[2] * this.bulletSpeed * deltaTime));
-            this.checkCollision(this.projectiles[0]);
-            //this.asteroids[i].model.position = vec3.fromValues(0, -5, 0);
-            //this.fire();
-        }         
+            
+            this.createSphereCollider(this.projectiles[i], 0.2);
+            };
+        
+        // }         
+        for (let i = 0; i < this.projectiles.length; i++) {
+            this.projectiles[i].onCollide = (object) => {
+                if (object.collider.type === "BOX") {
+                    this.projectiles.splice(i, 1);
+                    console.log("Bullet hit the ground");
+                } else if (object.collider.type === "SPHERE" && object.name !== "new-Bullet" && object.name !== "spacecraft") {
+                    let index = this.asteroids.indexOf(object);
+                    this.asteroids.splice(index, 1);
+                    this.projectiles.splice(i, 1);
+                    console.log("Bullet hit the meteor");
+                }
+                    
+                
+            }
+        }
+
+        for (let i = 0; i < this.projectiles.length; i++) {
+            this.checkCollision(this.projectiles[i]);
+        }
     
 
         for (let k = 0; k< this.asteroids.length; k++) {
@@ -387,15 +399,15 @@ class Game {
 
         
         
-        for (let i = 0; i < this.asteroids.length; i++){
-            //console.log("this", this.player);
-            if (this.ballShipCollider(this.asteroids[i], 2.5, this.player)) {
-                //console.log("collision!");
-                this.endGame();
+        // for (let i = 0; i < this.asteroids.length; i++){
+        //     //console.log("this", this.player);
+        //     if (this.ballShipCollider(this.asteroids[i], 2.5, this.player)) {
+        //         //console.log("collision!");
+        //         this.endGame();
                 
-            }
+        //     }
             
-        }
+        // }
        
         
         
