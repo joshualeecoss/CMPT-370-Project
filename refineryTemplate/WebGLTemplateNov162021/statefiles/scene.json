@@ -723,7 +723,7 @@
                 "position": [
                     0,
                     50,
-                    50
+                    0
                 ],
                 "strength": 1,
                 "quadratic": 0.035,
@@ -742,7 +742,7 @@
                 ],
                 "position": [
                     0,
-                    50,
+                    2,
                     -50
                 ],
                 "strength": 1,
