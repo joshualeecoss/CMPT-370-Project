@@ -134,11 +134,11 @@ async function main() {
                 distance = distance * distance;
                 diff = max(dot(normal, lightDir), 0.0);
 
-                if (diff > 0.0) {
+                //if (diff > 0.0) {
                     vec3 halfDir = normalize(lightDir + viewDir);
                     float spec = max(dot(halfDir, normal), 0.0);
                     specular = specularVal * pow(spec, nVal) * pointLights[i].strength * pointLights[i].colour / distance;
-                }
+                //}
 
                 vec4 textureColour;
                 if (samplerExists == 1) {
